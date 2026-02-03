@@ -1,18 +1,16 @@
 pipeline {
     agent any
 
-    stages {
+    tools {
+        maven 'Maven3'
+        jdk 'JDK21'
+    }
 
-        stage('Check Environment') {
-            steps {
-                sh 'java -version'
-                sh 'mvn -version'
-            }
-        }
+    stages {
 
         stage('Build') {
             steps {
-                sh 'mvn clean compile'
+                sh 'mvn -B -DskipTests clean package'
             }
         }
 
@@ -22,11 +20,10 @@ pipeline {
             }
         }
 
-        stage('Package') {
+        stage('Deliver') {
             steps {
-                sh 'mvn package'
+                echo 'Build successful'
             }
         }
     }
 }
-
