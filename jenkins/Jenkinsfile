@@ -1,17 +1,18 @@
 pipeline {
-
-    agent {
-        docker {
-            image 'maven:3.9.9-eclipse-temurin-17'
-            args '-v $HOME/.m2:/root/.m2'
-        }
-    }
+    agent any
 
     stages {
 
+        stage('Check Environment') {
+            steps {
+                sh 'java -version'
+                sh 'mvn -version'
+            }
+        }
+
         stage('Build') {
             steps {
-                sh 'mvn -B -DskipTests clean package'
+                sh 'mvn clean compile'
             }
         }
 
@@ -19,17 +20,13 @@ pipeline {
             steps {
                 sh 'mvn test'
             }
-            post {
-                always {
-                    junit 'target/surefire-reports/*.xml'
-                }
-            }
         }
 
-        stage('Deliver') {
+        stage('Package') {
             steps {
-                echo 'Build successful 🎉'
+                sh 'mvn package'
             }
         }
     }
 }
+
